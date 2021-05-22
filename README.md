@@ -1,4 +1,4 @@
-# HyperPlanning_scraper
+# HyperPlanning Grades Scraper
 Permet de notifier par mail l'étudiant lorsqu'une nouvelle note est saisie sur HyperPlanning.
 
 ## Dépendances
