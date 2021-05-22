@@ -2,7 +2,7 @@ import re
 import smtplib
 import ssl
 import time
-
+import getpass
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
@@ -37,14 +37,13 @@ def extract_all_grades():
                                            wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n"))) if
               g is not None]
     labels = [lbl.group(0) for lbl in list(map(lambda x: re.search(r'^(SI.*)', x),
-                                           wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n"))) if
+                                               wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n"))) if
               lbl is not None]
     return set(map(lambda x: tuple((x[0], x[1])), zip(labels, grades)))
 
-print("Type your username: ")
-user_hp = input()
-print("Type your password: ")
-password_hp = input()
+
+user_hp = getpass.getpass("Username: ")
+password_hp = getpass.getpass()
 print("READY")
 
 hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe",
@@ -54,7 +53,7 @@ hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe"
 op = webdriver.ChromeOptions()
 op.add_argument('--headless')
 op.add_argument('window-size=1920x1080')
-browser = webdriver.Chrome(executable_path='C:\\chromedriver.exe', options=op)
+browser = webdriver.Chrome(options=op)
 
 # Login in HyperPlanning
 browser.get("http://sco.polytech.unice.fr/1/")
@@ -70,10 +69,14 @@ all_grades = extract_all_grades()
 while True:
     wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
     curr_moy_etu, curr_moy_gen = extract_avg_grades()
-    if curr_moy_etu == moy_etu:
+    if curr_moy_etu != moy_etu:
         curr_all_grades = extract_all_grades()
-        body = "Before update: \n" + "\n".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
-        body += "\nAfter update: \n" + "\n".join(map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
+        body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
+        body += "\n\t *********************"
+        body += "\n\tStudent average: "+ moy_etu + "\n\tClass average: " + moy_gen
+        body += "\n\nAfter update: \n" + "\n\t".join(map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
+        body += "\n\t *********************"
+        body += "\n\tStudent average: "+ curr_moy_etu + "\n\tClass average: " + curr_moy_gen
         send_email("HyperPlanning Update", body)
         moy_etu, moy_gen = curr_moy_etu, curr_moy_gen
         all_grades = curr_all_grades
