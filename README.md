@@ -1,5 +1,5 @@
 # HyperPlanning Marks Scraper
-Permet de notifier par mail l'étudiant lorsqu'une nouvelle note est saisie sur HyperPlanning.
+Permet de notifier un étudiant sur son adresse email académique lorsqu'une nouvelle note est saisie sur HyperPlanning.
 
 ## Dépendances
 - Selenium pour simuler les actions utilisateurs (en mode headless donc sans navigateur): `pip install selenium`
