@@ -1,4 +1,4 @@
-# HyperPlanning Marks Monitoring
+# HyperPlanning Marks Tracking
 Permet de notifier un étudiant sur son adresse email académique lorsqu'une nouvelle note est saisie sur HyperPlanning.
 
 ## Démarrage
