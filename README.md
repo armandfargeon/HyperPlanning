@@ -1,4 +1,4 @@
-# HyperPlanning Marks Scraper
+# HyperPlanning Marks Monitoring
 Permet de notifier un étudiant sur son adresse email académique lorsqu'une nouvelle note est saisie sur HyperPlanning.
 
 ## Démarrage
