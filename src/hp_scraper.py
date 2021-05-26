@@ -44,7 +44,7 @@ def extract_all_grades():
 
 user_hp = getpass.getpass("Username: ")
 password_hp = getpass.getpass()
-print("READY")
+print("Init ...")
 
 hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe",
                  "MARKS_SECTION": "GInterface.Instances[0].Instances[1]_Combo1",
@@ -65,6 +65,7 @@ browser.find_element_by_name("submit").click()
 wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
 moy_etu, moy_gen = extract_avg_grades()
 all_grades = extract_all_grades()
+print("READY")
 
 while True:
     wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
@@ -80,5 +81,6 @@ while True:
         send_email("HyperPlanning Update", body)
         moy_etu, moy_gen = curr_moy_etu, curr_moy_gen
         all_grades = curr_all_grades
-
-    time.sleep(300)
+    t = time.localtime()
+    print(time.strftime("%H:%M:%S", t))
+    time.sleep(600)
