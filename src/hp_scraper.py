@@ -68,19 +68,23 @@ all_grades = extract_all_grades()
 print("READY")
 
 while True:
-    wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
-    curr_moy_etu, curr_moy_gen = extract_avg_grades()
-    if curr_moy_etu != moy_etu:
-        curr_all_grades = extract_all_grades()
-        body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
-        body += "\n\t *********************"
-        body += "\n\tStudent average: "+ moy_etu + "\n\tClass average: " + moy_gen
-        body += "\n\nAfter update: \n" + "\n\t".join(map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
-        body += "\n\t *********************"
-        body += "\n\tStudent average: "+ curr_moy_etu + "\n\tClass average: " + curr_moy_gen
-        send_email("HyperPlanning Update", body)
-        moy_etu, moy_gen = curr_moy_etu, curr_moy_gen
-        all_grades = curr_all_grades
-    t = time.localtime()
-    print(time.strftime("%H:%M:%S", t))
-    time.sleep(600)
+    try:
+        wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
+        curr_moy_etu, curr_moy_gen = extract_avg_grades()
+        if curr_moy_gen != moy_gen:
+            curr_all_grades = extract_all_grades()
+            body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
+            body += "\n\t *********************"
+            body += "\n\tStudent average: "+ moy_etu + "\n\tClass average: " + moy_gen
+            body += "\n\nAfter update: \n" + "\n\t".join(map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
+            body += "\n\t *********************"
+            body += "\n\tStudent average: "+ curr_moy_etu + "\n\tClass average: " + curr_moy_gen
+            send_email("HyperPlanning Update", body)
+            moy_etu, moy_gen = curr_moy_etu, curr_moy_gen
+            all_grades = curr_all_grades
+        t = time.localtime()
+        print(time.strftime("%H:%M:%S", t))
+        time.sleep(600)
+    except StaleElementReferenceException:
+        print("StaleElementReferenceException ; Retrying ...")
+        pass
