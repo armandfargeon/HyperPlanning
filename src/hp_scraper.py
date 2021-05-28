@@ -4,7 +4,7 @@ import ssl
 import time
 import getpass
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 
 def send_email(subject, msg, port=587, smtp_server="smtp.office365.com"):
@@ -42,8 +42,10 @@ def extract_all_grades():
     return set(map(lambda x: tuple((x[0], x[1])), zip(labels, grades)))
 
 
-user_hp = getpass.getpass("Username: ")
+user_hp = input("Username: ")
 password_hp = getpass.getpass()
+user_hp = user_hp[:len(user_hp) - 1]
+password_hp = password_hp[:len(password_hp) - 1]
 print("Init ...")
 
 hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe",
@@ -53,6 +55,8 @@ hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe"
 op = webdriver.ChromeOptions()
 op.add_argument('--headless')
 op.add_argument('window-size=1920x1080')
+op.add_argument('--no-sandbox')
+op.add_argument('--disable-gpu')
 browser = webdriver.Chrome(options=op)
 
 # Login in HyperPlanning
@@ -71,7 +75,7 @@ while True:
     try:
         wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
         curr_moy_etu, curr_moy_gen = extract_avg_grades()
-        if curr_moy_etu != moy_etu:
+        if curr_moy_gen != moy_gen:
             curr_all_grades = extract_all_grades()
             body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
             body += "\n\t *********************"
