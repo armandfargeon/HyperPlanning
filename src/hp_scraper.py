@@ -47,6 +47,9 @@ password_hp = getpass.getpass()
 print("Init ...")
 
 hp_element_id = {"AVG_MARKS": "GInterface.Instances[1].Instances[3]_piedDeListe",
+                 "SEMESTERS": "GInterface.Instances[1].Instances[1]",
+                 "S9": "GInterface.Instances[1].Instances[1]_1",
+                 "BODY": "GInterface.Instances[1]",
                  "MARKS_SECTION": "GInterface.Instances[0].Instances[1]_Combo1",
                  "ALL_MARKS": "GInterface.Instances[1].Instances[3]_Contenu_1"}
 # Selenium config
@@ -63,6 +66,11 @@ browser.find_element_by_name("submit").click()
 
 # Move to the marks section and current marks extraction
 wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
+wait_for_element_by_id(hp_element_id["BODY"]).click()
+wait_for_element_by_id(hp_element_id["SEMESTERS"]).click()
+time.sleep(3)
+wait_for_element_by_id(hp_element_id["S9"]).click()
+
 moy_etu, moy_gen = extract_avg_grades()
 all_grades = extract_all_grades()
 print("READY")
@@ -72,13 +80,15 @@ while True:
         wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
         curr_moy_etu, curr_moy_gen = extract_avg_grades()
         if curr_moy_etu != moy_etu:
+            print("New update")
             curr_all_grades = extract_all_grades()
             body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
             body += "\n\t *********************"
-            body += "\n\tStudent average: "+ moy_etu + "\n\tClass average: " + moy_gen
-            body += "\n\nAfter update: \n" + "\n\t".join(map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
+            body += "\n\tStudent average: " + moy_etu + "\n\tClass average: " + moy_gen
+            body += "\n\nAfter update: \n" + "\n\t".join(
+                map(lambda x: ' '.join(x), curr_all_grades.difference(all_grades)))
             body += "\n\t *********************"
-            body += "\n\tStudent average: "+ curr_moy_etu + "\n\tClass average: " + curr_moy_gen
+            body += "\n\tStudent average: " + curr_moy_etu + "\n\tClass average: " + curr_moy_gen
             send_email("HyperPlanning Update", body)
             moy_etu, moy_gen = curr_moy_etu, curr_moy_gen
             all_grades = curr_all_grades
