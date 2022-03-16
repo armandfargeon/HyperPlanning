@@ -33,12 +33,12 @@ def extract_avg_grades(): return \
 
 
 def extract_all_grades():
-    grades = [g.group(1) for g in list(map(lambda x: re.search(r'^\s\s(\d+,\d+)', x),
-                                           wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n"))) if
+    marks = wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n")
+    grades = [g.group(1) for g in list(map(lambda x: re.search(r'^\s\s(\d+,\d+)', x), marks)) if
               g is not None]
-    labels = [lbl.group(0) for lbl in list(map(lambda x: re.search(r'^(SI.*)', x),
-                                               wait_for_element_by_id(hp_element_id["ALL_MARKS"]).text.split("\n"))) if
-              lbl is not None]
+    labels = [lbl.group(0) for lbl in list(map(lambda x: re.search(r'^[A-Z].*', x),
+                                               marks)) if
+              lbl is not None and not lbl.string.startswith('Moy')]
     return set(map(lambda x: tuple((x[0], x[1])), zip(labels, grades)))
 
 
@@ -79,7 +79,7 @@ while True:
     try:
         wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
         curr_moy_etu, curr_moy_gen = extract_avg_grades()
-        if curr_moy_etu != moy_etu:
+        if curr_moy_etu != moy_etu or True:
             print("New update")
             curr_all_grades = extract_all_grades()
             body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
