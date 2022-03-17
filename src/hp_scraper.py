@@ -79,7 +79,7 @@ while True:
     try:
         wait_for_element_by_id(hp_element_id["MARKS_SECTION"]).click()
         curr_moy_etu, curr_moy_gen = extract_avg_grades()
-        if curr_moy_etu != moy_etu or True:
+        if curr_moy_etu != moy_etu:
             print("New update")
             curr_all_grades = extract_all_grades()
             body = "Before update: \n" + "\n\t".join(map(lambda x: ' '.join(x), all_grades.difference(curr_all_grades)))
